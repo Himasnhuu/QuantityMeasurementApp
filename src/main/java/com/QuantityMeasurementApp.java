@@ -67,9 +67,20 @@ public class QuantityMeasurementApp {
         Inches inches4 = new Inches(2.0);
         System.out.println("Comparing 1.0 inch and 2.0 inch: " + inches3.equals(inches4));
     }
+    
+    public static boolean demonstrateLengthEquality(Length length1, Length length2) {
+        return length1.equals(length2);
+    }
+    
+    public static void demonstrateFeetInchesComparison() {
+        Length feet = new Length(1.0, Length.LengthUnit.FEET);
+        Length inches = new Length(12.0, Length.LengthUnit.INCHES);
+        System.out.println("Comparing 1.0 ft and 12.0 inches: " + demonstrateLengthEquality(feet, inches));
+    }
 
     public static void main(String[] args) {
         demonstrateFeetEquality();
         demonstrateInchesEquality();
+        demonstrateFeetInchesComparison();
     }
 }

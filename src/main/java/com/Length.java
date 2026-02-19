@@ -7,8 +7,10 @@ public class Length {
 
     public enum LengthUnit {
         FEET(12.0),
-        INCHES(1.0);
-
+        INCHES(1.0),
+        YARDS(36.0),
+        CENTIMETERS(1.0/2.54);
+        
         private final double conversionFactor;
 
         LengthUnit(double conversionFactor) {
@@ -32,7 +34,10 @@ public class Length {
     public boolean compare(Length thatLength) {
         double thisBase = this.convertToBaseUnit();
         double thatBase = thatLength.convertToBaseUnit();
-        return Double.compare(thisBase, thatBase) == 0;
+//        return Double.compare(thisBase, thatBase) == 0;
+        
+        double epsilon = 0.0001;
+        return Math.abs(thisBase - thatBase) < epsilon;
     }
 
     @Override

@@ -54,6 +54,25 @@ public class Length {
         Length length = (Length) o;
         return compare(length);
     }
+    
+    public Length convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+        
+        double baseValue = this.convertToBaseUnit();
+        double convertedValue = baseValue / targetUnit.getConversionFactor();
+        convertedValue = Math.round(convertedValue * 100.0) / 100.0;
+        
+        return new Length(convertedValue, targetUnit);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%.2f %s", value, unit);
+    }
+    
+    
 
     public static void main(String[] args) {
         Length length1 = new Length(1.0, LengthUnit.FEET);

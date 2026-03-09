@@ -5,6 +5,8 @@ public class Length {
     private double value;
     private LengthUnit unit;
 
+    //-----------------------------------------------------------------------------------------------
+    //enum 
     public enum LengthUnit {
         FEET(12.0),
         INCHES(1.0),
@@ -21,6 +23,7 @@ public class Length {
             return conversionFactor;
         }
     }
+    // ----------------------------------------------------------------------------------------------------
 
     public Length(double value, LengthUnit unit) {
         this.value = value;

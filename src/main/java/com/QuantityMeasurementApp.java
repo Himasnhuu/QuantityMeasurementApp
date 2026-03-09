@@ -58,6 +58,61 @@ public class QuantityMeasurementApp {
 		return length1.add(length2, targetUnit);
 	}
 
+	public static boolean demonstrateWeightEquality(Weight weight1, Weight weight2) {
+
+		if (weight1 == null || weight2 == null) {
+			throw new IllegalArgumentException("Weights cannot be null");
+		}
+
+		return weight1.equals(weight2);
+	}
+
+	public static boolean demonstrateWeightComparison(double value1, WeightUnit unit1, double value2,
+			WeightUnit unit2) {
+
+		Weight weight1 = new Weight(value1, unit1);
+		Weight weight2 = new Weight(value2, unit2);
+
+		return demonstrateWeightEquality(weight1, weight2);
+	}
+
+	public static Weight demonstrateWeightConversion(double value, WeightUnit fromUnit, WeightUnit toUnit) {
+
+		Weight weight = new Weight(value, fromUnit);
+		return weight.convertTo(toUnit);
+	}
+
+	public static Weight demonstrateWeightConversion(Weight weight, WeightUnit toUnit) {
+
+		if (weight == null) {
+			throw new IllegalArgumentException("Weight cannot be null");
+		}
+
+		return weight.convertTo(toUnit);
+	}
+
+	public static Weight demonstrateWeightAddition(Weight weight1, Weight weight2) {
+
+		if (weight1 == null || weight2 == null) {
+			throw new IllegalArgumentException("Weights cannot be null");
+		}
+
+		return weight1.add(weight2);
+	}
+
+	public static Weight demonstrateWeightAddition(Weight weight1, Weight weight2, WeightUnit targetUnit) {
+
+		if (weight1 == null || weight2 == null) {
+			throw new IllegalArgumentException("Weights cannot be null");
+		}
+
+		if (targetUnit == null) {
+			throw new IllegalArgumentException("Target unit cannot be null");
+		}
+
+		return weight1.add(weight2, targetUnit);
+	}
+
 	public static void main(String[] args) {
 
 		System.out.println("---- Equality Demonstration ----");
@@ -69,7 +124,8 @@ public class QuantityMeasurementApp {
 
 		System.out.println("\n---- Comparison Using Raw Values ----");
 
-		System.out.println("3 ft == 1 yd : " + demonstrateLengthComparison(3.0, LengthUnit.FEET, 1.0, LengthUnit.YARDS));
+		System.out
+				.println("3 ft == 1 yd : " + demonstrateLengthComparison(3.0, LengthUnit.FEET, 1.0, LengthUnit.YARDS));
 
 		System.out.println("\n---- Conversion Demonstration ----");
 
@@ -103,5 +159,32 @@ public class QuantityMeasurementApp {
 				new Length(12.0, LengthUnit.INCHES), LengthUnit.YARDS);
 
 		System.out.println("1 ft + 12 in -> yards = " + result3);
+
+		System.out.println("\n---- Weight Equality ----");
+
+		Weight w1 = new Weight(1.0, WeightUnit.KILOGRAM);
+		Weight w2 = new Weight(1000.0, WeightUnit.GRAM);
+
+		System.out.println("1 kg == 1000 g : " + demonstrateWeightEquality(w1, w2));
+
+		System.out.println("\n---- Weight Conversion ----");
+
+		Weight convertedWeight = demonstrateWeightConversion(2.0, WeightUnit.POUND, WeightUnit.KILOGRAM);
+
+		System.out.println("2 lb -> kg : " + convertedWeight);
+
+		System.out.println("\n---- Weight Addition ----");
+
+		Weight sum = demonstrateWeightAddition(new Weight(1.0, WeightUnit.KILOGRAM),
+				new Weight(1000.0, WeightUnit.GRAM));
+
+		System.out.println("1 kg + 1000 g = " + sum);
+
+		System.out.println("\n---- Weight Addition with Target Unit ----");
+
+		Weight sumInGrams = demonstrateWeightAddition(new Weight(1.0, WeightUnit.KILOGRAM),
+				new Weight(1000.0, WeightUnit.GRAM), WeightUnit.GRAM);
+
+		System.out.println("1 kg + 1000 g -> grams = " + sumInGrams);
 	}
 }

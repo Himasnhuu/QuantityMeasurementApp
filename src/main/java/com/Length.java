@@ -63,6 +63,19 @@ public class Length {
 			throw new IllegalArgumentException("Length to add cannot be null");
 		}
 
+		return addInternal(other, this.unit);
+	}
+
+	public Length add(Length other, LengthUnit targetUnit) {
+
+		if (other == null) {
+			throw new IllegalArgumentException("Length to add cannot be null");
+		}
+
+		if (targetUnit == null) {
+			throw new IllegalArgumentException("Target unit cannot be null");
+		}
+
 		if (this.unit == null || other.unit == null) {
 			throw new IllegalArgumentException("Length unit cannot be null");
 		}
@@ -71,16 +84,25 @@ public class Length {
 			throw new IllegalArgumentException("Length values must be finite numbers");
 		}
 
+		return addInternal(other, targetUnit);
+	}
+
+	private Length addInternal(Length other, LengthUnit targetUnit) {
+
+		// Convert both operands to base unit (inches)
 		double thisBase = this.convertToBaseUnit();
 		double otherBase = other.convertToBaseUnit();
 
+		// Add base values
 		double sumBase = thisBase + otherBase;
 
-		double resultValue = sumBase / this.unit.getConversionFactor();
+		// Convert result to target unit
+		double resultValue = sumBase / targetUnit.getConversionFactor();
 
-		resultValue = Math.round(resultValue * 100.0) / 100.0;
+		// consistent rounding
+		resultValue = Math.round(resultValue * 1000.0) / 1000.0;
 
-		return new Length(resultValue, this.unit);
+		return new Length(resultValue, targetUnit);
 	}
 
 	@Override

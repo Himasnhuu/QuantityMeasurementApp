@@ -82,7 +82,7 @@ public class Quantity<U extends IMeasurable> {
 
     // ---------------- DIVISION ----------------
 
-    public double divide(Quantity<U> other) {
+    public double divide(Quantity<U> other) {    
 
         validateArithmeticOperands(other, null, false);
 
@@ -114,6 +114,8 @@ public class Quantity<U extends IMeasurable> {
     private double performBaseArithmetic(
             Quantity<U> other,
             ArithmeticOperation operation) {
+    	
+    	unit.validateOperationSupport(operation.name());
 
         double base1 = this.convertToBaseUnit();
         double base2 = other.convertToBaseUnit();

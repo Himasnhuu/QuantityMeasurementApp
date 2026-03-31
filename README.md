@@ -22,44 +22,40 @@ QuantityMeasurementApp/
 ├── feature/UC13-CentralizedArithmeticLogic
 ├── feature/UC14-TemperatureMeasurement
 ├── feature/UC15-N-Tier-Architecture
-└── feature/UC16-Database-Integration
+├── feature/UC16-Database-Integration
+└── feature/UC17-Spring-Backend-Quantity-Measurement
 ```
 
 ### Project Directory Structure
 ```
 QuantityMeasurementApp/
-├── .classpath
 ├── .mvn/
-├── .project
 ├── .settings/
-├── pom.xml
-├── quantity_measurement_repo.ser
 ├── src/
 │   ├── main/
 │   │   ├── java/
 │   │   │   └── com/
-│   │   │       ├── controller/
-│   │   │       ├── core/
-│   │   │       ├── dto/
-│   │   │       ├── entity/
-│   │   │       ├── exception/
-│   │   │       ├── repository/
-│   │   │       ├── service/
-│   │   │       ├── unit/
-│   │   │       ├── util/
-│   │   │       └── QuantityMeasurementApp.java
+│   │   │       └── app/
+│   │   │           └── quantitymeasurement/
+│   │   │               ├── controller/
+│   │   │               ├── entity/
+│   │   │               ├── exception/
+│   │   │               ├── repository/
+│   │   │               ├── service/
+│   │   │               ├── unit/
+│   │   │               ├── Quantity.java
+│   │   │               ├── QuantityDemo.java
+│   │   │               └── QuantityMeasurementApp.java
 │   │   └── resources/
 │   └── test/
 │       └── java/
 │           └── com/
-│               ├── ArithematicEnumTest.java
-│               ├── IMeasurableAndGenericImpl.java
-│               ├── QuantityMeasurementAppTest.java
-│               ├── QuantitySubtractionAndDivisionTest.java
-│               ├── TemperatureTest.java
-│               ├── VolumeUnitTest.java
-│               └── WeightImplTest.java
-└── target/
+│               └── QuantityMeasurementAppTest.java
+├── .classpath
+├── .gitignore
+├── .project
+├── README.md
+└── pom.xml
 ```
 
 ## Use Cases
@@ -191,3 +187,11 @@ UC15 refactors the monolithic Quantity Measurement Application into a profession
 UC16 extends the Quantity Measurement Application by introducing persistent database storage through JDBC (Java Database Connectivity). Building upon the N-Tier architecture established in UC15, this use case implements a QuantityMeasurementDatabaseRepository class that replaces the in-memory QuantityMeasurementCacheRepository for long-term data persistence. The application now supports storing and retrieving quantity measurement operation history from a relational database, enabling audit trails, reporting, and historical analysis.
 
 **GitHub Branch:** https://github.com/Himasnhuu/QuantityMeasurementApp/tree/feature/UC16-Database-Integration
+
+---
+
+### UC17: Spring Framework Integration
+
+UC17 transforms the standalone Quantity Measurement Application into a Spring Boot-based REST service by leveraging Spring Framework's powerful ecosystem. This use case maintains all existing business logic, entities, and architectural patterns while modernizing the persistence layer with Spring Data JPA and exposing functionality through RESTful HTTP endpoints.
+
+**GitHub Branch:** https://github.com/Himasnhuu/QuantityMeasurementApp/tree/feature/UC17-Spring-Backend-Quantity-Measurement

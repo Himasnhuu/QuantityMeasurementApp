@@ -1,112 +1,84 @@
 package com.app.quantitymeasurement.entity;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-public class QuantityMeasurementEntity implements Serializable {
+@Entity
+@Table(name = "quantity_measurement")
+public class QuantityMeasurementEntity {
 
-    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private double thisValue;
-    private String thisUnit;
-    private double thatValue;
-    private String thatUnit;
     private String operation;
+    private String operand1;
+    private String operand2;
     private String result;
-    private boolean isError;
-    private String errorMessage;
+    private String error;
 
     public QuantityMeasurementEntity() {
     }
 
-    public QuantityMeasurementEntity(double thisValue, String thisUnit, double thatValue, 
-                                     String thatUnit, String operation, String result, 
-                                     boolean isError, String errorMessage) {
-        this.thisValue = thisValue;
-        this.thisUnit = thisUnit;
-        this.thatValue = thatValue;
-        this.thatUnit = thatUnit;
+    public QuantityMeasurementEntity(String operation, String op1, String op2, String result) {
         this.operation = operation;
+        this.operand1 = op1;
+        this.operand2 = op2;
         this.result = result;
-        this.isError = isError;
-        this.errorMessage = errorMessage;
     }
 
-    public double getThisValue() {
-        return thisValue;
+    public QuantityMeasurementEntity(String error) {
+        this.error = error;
     }
 
-    public void setThisValue(double thisValue) {
-        this.thisValue = thisValue;
+    public boolean hasError() {
+        return error != null;
     }
 
-    public String getThisUnit() {
-        return thisUnit;
-    }
-
-    public void setThisUnit(String thisUnit) {
-        this.thisUnit = thisUnit;
-    }
-
-    public double getThatValue() {
-        return thatValue;
-    }
-
-    public void setThatValue(double thatValue) {
-        this.thatValue = thatValue;
-    }
-
-    public String getThatUnit() {
-        return thatUnit;
-    }
-
-    public void setThatUnit(String thatUnit) {
-        this.thatUnit = thatUnit;
+    public Long getId() {
+        return id;
     }
 
     public String getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public String getOperand1() {
+        return operand1;
+    }
+
+    public String getOperand2() {
+        return operand2;
     }
 
     public String getResult() {
         return result;
     }
 
+    public String getError() {
+        return error;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public void setOperand1(String operand1) {
+        this.operand1 = operand1;
+    }
+
+    public void setOperand2(String operand2) {
+        this.operand2 = operand2;
+    }
+
     public void setResult(String result) {
         this.result = result;
     }
 
-    public boolean isError() {
-        return isError;
-    }
-
-    public void setError(boolean error) {
-        isError = error;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    @Override
-    public String toString() {
-        if (isError) {
-            return "QuantityMeasurementEntity{ERROR: " + errorMessage + "}";
-        }
-        return "QuantityMeasurementEntity{" +
-                "thisValue=" + thisValue +
-                ", thisUnit='" + thisUnit + '\'' +
-                ", thatValue=" + thatValue +
-                ", thatUnit='" + thatUnit + '\'' +
-                ", operation='" + operation + '\'' +
-                ", result='" + result + '\'' +
-                '}';
+    public void setError(String error) {
+        this.error = error;
     }
 }

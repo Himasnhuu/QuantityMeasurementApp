@@ -48,6 +48,35 @@ public class QuantityMeasurementApp {
 		return quantity1.add(quantity2, targetUnit);
 	}
 
+	public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> quantity1,
+			Quantity<U> quantity2) {
+
+		if (quantity1 == null || quantity2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
+
+		return quantity1.subtract(quantity2);
+	}
+
+	public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> quantity1,
+			Quantity<U> quantity2, U targetUnit) {
+
+		if (quantity1 == null || quantity2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
+
+		if (targetUnit == null)
+			throw new IllegalArgumentException("Target unit cannot be null");
+
+		return quantity1.subtract(quantity2, targetUnit);
+	}
+
+	public static <U extends IMeasurable> double demonstrateDivision(Quantity<U> quantity1, Quantity<U> quantity2) {
+
+		if (quantity1 == null || quantity2 == null)
+			throw new IllegalArgumentException("Quantities cannot be null");
+
+		return quantity1.divide(quantity2);
+	}
+
 	public static void main(String[] args) {
 
 		// -------- LENGTH --------
@@ -84,5 +113,20 @@ public class QuantityMeasurementApp {
 		System.out.println("Volume Conversion: " + demonstrateConversion(volume3, VolumeUnit.LITRE));
 
 		System.out.println("Volume Addition: " + demonstrateAddition(volume1, volume2, VolumeUnit.LITRE));
+		
+		Quantity<LengthUnit> subtractionResult = demonstrateSubtraction(length1, length2);
+
+		System.out.println("Subtraction Result: " + subtractionResult);
+		// Quantity(9.5, FEET)
+
+		Quantity<LengthUnit> subtractionInInches = demonstrateSubtraction(length1, length2, LengthUnit.INCHES);
+
+		System.out.println("Subtraction in Inches: " + subtractionInInches);
+		// Quantity(114.0, INCHES)
+
+		double divisionResult = demonstrateDivision(length1, new Quantity<>(2.0, LengthUnit.FEET));
+
+		System.out.println("Division Result: " + divisionResult);
+		// 5.0
 	}
 }

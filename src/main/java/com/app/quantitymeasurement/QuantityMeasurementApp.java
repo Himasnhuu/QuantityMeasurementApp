@@ -12,6 +12,9 @@ public class QuantityMeasurementApp {
         SpringApplication.run(QuantityMeasurementApp.class, args);
     }
 
+
+    //It is used to run the code of previous use cases
+    //I kept the code of previous use cases
     @Bean
     CommandLineRunner runDemo() {
         return args -> {

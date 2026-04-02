@@ -2,8 +2,8 @@ package com;
 
 public class Length {
 
-	private double value;
-	private LengthUnit unit;
+	private final double value;
+	private final LengthUnit unit;
 
 	public static void main(String[] args) {
 		Length length1 = new Length(1.0, LengthUnit.FEET);
@@ -11,35 +11,26 @@ public class Length {
 		System.out.println("Are lengths equal? " + length1.equals(length2));
 	}
 
-	// -----------------------------------------------------------------------
-	// enum
-	public enum LengthUnit {
-		FEET(12.0), INCHES(1.0), YARDS(36.0), CENTIMETERS(1.0 / 2.54);
-
-		private final double conversionFactor;
-
-		LengthUnit(double conversionFactor) {
-			this.conversionFactor = conversionFactor;
-		}
-
-		public double getConversionFactor() {
-			return conversionFactor;
-		}
-	}
-	// -------------------------------------------------------------------------
-
 	public Length(double value, LengthUnit unit) {
+
+		if (unit == null) {
+			throw new IllegalArgumentException("Unit cannot be null");
+		}
+		if (!Double.isFinite(value)) {
+			throw new IllegalArgumentException("Invalid Length Value");
+		}
+
 		this.value = value;
 		this.unit = unit;
 	}
 
 	private double convertToBaseUnit() {
-		return this.value * this.unit.getConversionFactor();
+		return unit.convertToBaseUnit(value);
 	}
 
-	public boolean compare(Length thatLength) {
+	public boolean compare(Length other) {
 		double thisBase = this.convertToBaseUnit();
-		double thatBase = thatLength.convertToBaseUnit();
+		double thatBase = other.convertToBaseUnit();
 
 		double epsilon = 0.0001;
 		return Math.abs(thisBase - thatBase) < epsilon;
@@ -50,56 +41,31 @@ public class Length {
 			throw new IllegalArgumentException("Target unit cannot be null");
 		}
 
-		double baseValue = this.convertToBaseUnit();
-		double convertedValue = baseValue / targetUnit.getConversionFactor();
+		double baseValue = convertToBaseUnit();
+		double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
 		convertedValue = Math.round(convertedValue * 100.0) / 100.0;
 
 		return new Length(convertedValue, targetUnit);
 	}
 
 	public Length add(Length other) {
-
-		if (other == null) {
-			throw new IllegalArgumentException("Length to add cannot be null");
-		}
-
-		return addInternal(other, this.unit);
+		return add(other, this.unit);
 	}
 
 	public Length add(Length other, LengthUnit targetUnit) {
 
 		if (other == null) {
-			throw new IllegalArgumentException("Length to add cannot be null");
+			throw new IllegalArgumentException("Other length cannot be null");
 		}
 
 		if (targetUnit == null) {
 			throw new IllegalArgumentException("Target unit cannot be null");
 		}
 
-		if (this.unit == null || other.unit == null) {
-			throw new IllegalArgumentException("Length unit cannot be null");
-		}
+		double baseSum = this.convertToBaseUnit() + other.convertToBaseUnit();
 
-		if (!Double.isFinite(this.value) || !Double.isFinite(other.value)) {
-			throw new IllegalArgumentException("Length values must be finite numbers");
-		}
+		double resultValue = targetUnit.convertFromBaseUnit(baseSum);
 
-		return addInternal(other, targetUnit);
-	}
-
-	private Length addInternal(Length other, LengthUnit targetUnit) {
-
-		// Convert both operands to base unit (inches)
-		double thisBase = this.convertToBaseUnit();
-		double otherBase = other.convertToBaseUnit();
-
-		// Add base values
-		double sumBase = thisBase + otherBase;
-
-		// Convert result to target unit
-		double resultValue = sumBase / targetUnit.getConversionFactor();
-
-		// consistent rounding
 		resultValue = Math.round(resultValue * 1000.0) / 1000.0;
 
 		return new Length(resultValue, targetUnit);

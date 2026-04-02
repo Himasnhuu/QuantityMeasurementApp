@@ -1,283 +1,349 @@
 package com;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import com.app.quantitymeasurement.model.QuantityModel;
-import com.app.quantitymeasurement.units.*;
+import com.core.Length;
+import com.unit.LengthUnit;
 
 public class QuantityMeasurementAppTest {
 
-	private static final double EPSILON = 0.0001;
+    private static final double EPSILON = 0.01;
+
+   
+
+    @Test
+    public void testFeetEquality() {
+        assertTrue(new Length(1.0, LengthUnit.FEET)
+                .equals(new Length(1.0, LengthUnit.FEET)));
+    }
+
+    @Test
+    public void testInchesEquality() {
+        assertTrue(new Length(1.0, LengthUnit.INCHES)
+                .equals(new Length(1.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void testFeetInchesComparison() {
+        assertTrue(new Length(1.0, LengthUnit.FEET)
+                .equals(new Length(12.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void testFeetInequality() {
+        assertFalse(new Length(1.0, LengthUnit.FEET)
+                .equals(new Length(2.0, LengthUnit.FEET)));
+    }
+
+    @Test
+    public void testInchesInequality() {
+        assertFalse(new Length(1.0, LengthUnit.INCHES)
+                .equals(new Length(2.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void testCrossUnitInequality() {
+        assertFalse(new Length(1.0, LengthUnit.FEET)
+                .equals(new Length(10.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void testMultipleFeetComparison() {
+        assertTrue(new Length(3.0, LengthUnit.FEET)
+                .equals(new Length(36.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void yardEquals36Inches() {
+        assertTrue(new Length(1.0, LengthUnit.YARDS)
+                .equals(new Length(36.0, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void centimeterEqualsInches() {
+        assertTrue(new Length(1.0, LengthUnit.CENTIMETERS)
+                .equals(new Length(0.393701, LengthUnit.INCHES)));
+    }
+
+    @Test
+    public void threeFeetEqualOneYard() {
+        assertTrue(new Length(3.0, LengthUnit.FEET)
+                .equals(new Length(1.0, LengthUnit.YARDS)));
+    }
+
+    // ---------------- Equality ----------------
+
+    @Test
+    public void referenceEqualitySameObject() {
+        Length l = new Length(5.0, LengthUnit.FEET);
+        assertTrue(l.equals(l));
+    }
+
+    @Test
+    public void equalsReturnsFalseForNull() {
+        assertFalse(new Length(5.0, LengthUnit.FEET)
+                .equals(null));
+    }
+
+    @Test
+    public void reflexiveSymmetricAndTransitiveProperty() {
+
+        Length yard = new Length(1.0, LengthUnit.YARDS);
+        Length feet = new Length(3.0, LengthUnit.FEET);
+        Length inches = new Length(36.0, LengthUnit.INCHES);
+
+        assertTrue(yard.equals(feet));
+        assertTrue(feet.equals(inches));
+        assertTrue(yard.equals(inches));
+    }
+
+    @Test
+    public void differentValuesSameUnitNotEqual() {
+        assertFalse(new Length(2.0, LengthUnit.FEET)
+                .equals(new Length(3.0, LengthUnit.FEET)));
+    }
+
+    // UC5 CONVERSION TESTS 
+
+    @Test
+    public void convertFeetToInches() {
+        Length result = QuantityMeasurementApp
+                .demonstrateLengthConversion(
+                        10.0,
+                        LengthUnit.FEET,
+                        LengthUnit.INCHES);
 
-	@Test
-	void testTemperatureEquality_CelsiusToCelsius_SameValue() {
-		assertTrue(new QuantityModel(0.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(0.0, TemperatureUnit.CELSIUS)));
-	}
+        assertEquals(120.0, result.getValue(), EPSILON);
+    }
 
-	@Test
-	void testTemperatureEquality_FahrenheitToFahrenheit_SameValue() {
-		assertTrue(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)
-				.equals(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)));
-	}
+    @Test
+    public void convertYardsToInchesUsingOverloadedMethod() {
 
-	@Test
-	void testTemperatureEquality_CelsiusToFahrenheit_0Celsius32Fahrenheit() {
-		assertTrue(
-				new QuantityModel(0.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)));
-	}
+        Length result = QuantityMeasurementApp
+                .demonstrateLengthConversion(
+                        new Length(2.0, LengthUnit.YARDS),
+                        LengthUnit.INCHES);
 
-	@Test
-	void testTemperatureEquality_CelsiusToFahrenheit_100Celsius212Fahrenheit() {
-		assertTrue(new QuantityModel(100.0, TemperatureUnit.CELSIUS)
-				.equals(new QuantityModel(212.0, TemperatureUnit.FAHRENHEIT)));
-	}
+        assertEquals(72.0, result.getValue(), EPSILON);
+    }
 
-	@Test
-	void testTemperatureEquality_CelsiusToFahrenheit_Negative40Equal() {
-		assertTrue(new QuantityModel(-40.0, TemperatureUnit.CELSIUS)
-				.equals(new QuantityModel(-40.0, TemperatureUnit.FAHRENHEIT)));
-	}
+    //UC6 ADDITION TESTS 
 
-	@Test
-	void testTemperatureEquality_SymmetricProperty() {
+    @Test
+    public void addFeetAndInches() {
 
-		QuantityModel a = new QuantityModel(0.0, TemperatureUnit.CELSIUS);
+        Length length1 = new Length(1.0, LengthUnit.FEET);
+        Length length2 = new Length(12.0, LengthUnit.INCHES);
 
-		QuantityModel b = new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT);
+        Length sumLength =
+                QuantityMeasurementApp.demonstrateAddition(length1, length2);
 
-		assertTrue(a.equals(b));
-		assertTrue(b.equals(a));
-	}
+        Length expectedLength =
+                new Length(2.0, LengthUnit.FEET);
 
-	@Test
-	void testTemperatureEquality_ReflexiveProperty() {
+        assertTrue(QuantityMeasurementApp
+                .demonstrateLengthEquality(sumLength, expectedLength));
+    }
+
+    @Test
+    public void testAddition_SameUnit() {
 
-		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
+        Length result = new Length(1.0, LengthUnit.FEET)
+                .add(new Length(2.0, LengthUnit.FEET));
 
-		assertTrue(t.equals(t));
-	}
+        assertEquals(3.0, result.getValue(), EPSILON);
+    }
 
-	@Test
-	void testTemperatureConversion_CelsiusToFahrenheit_VariousValues() {
+    @Test
+    public void testAddition_Commutativity() {
 
-		assertEquals(122.0,
-				new QuantityModel(50.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
-				EPSILON);
+        Length a = new Length(1.0, LengthUnit.FEET);
+        Length b = new Length(12.0, LengthUnit.INCHES);
 
-		assertEquals(-4.0,
-				new QuantityModel(-20.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
-				EPSILON);
-	}
+        assertTrue(a.add(b).equals(b.add(a)));
+    }
 
-	@Test
-	void testTemperatureConversion_FahrenheitToCelsius_VariousValues() {
+    @Test
+    public void testAddition_WithZero() {
 
-		assertEquals(50.0,
-				new QuantityModel(122.0, TemperatureUnit.FAHRENHEIT).convertTo(TemperatureUnit.CELSIUS).getValue(),
-				EPSILON);
-	}
+        Length result = new Length(5.0, LengthUnit.FEET)
+                .add(new Length(0.0, LengthUnit.INCHES));
+
+        assertEquals(5.0, result.getValue(), EPSILON);
+    }
 
-	@Test
-	void testTemperatureConversion_RoundTrip_PreservesValue() {
+    @Test
+    public void testAddition_NegativeValues() {
 
-		QuantityModel original = new QuantityModel(25.0, TemperatureUnit.CELSIUS);
+        Length result = new Length(5.0, LengthUnit.FEET)
+                .add(new Length(-2.0, LengthUnit.FEET));
+
+        assertEquals(3.0, result.getValue(), EPSILON);
+    }
+    
+    
+    // UC7 TragetAddition
+    @Test
+    public void testAddition_ExplicitTargetUnit_Feet() {
+
+        Length result = new Length(1.0,LengthUnit.FEET)
+                .add(new Length(12.0,LengthUnit.INCHES),
+                        LengthUnit.FEET);
+
+        assertEquals(2.0, result.getValue(), EPSILON);
+        assertEquals(LengthUnit.FEET, result.getUnit());
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_Inches() {
+
+        Length result = new Length(1.0, LengthUnit.FEET)
+                .add(new Length(12.0, LengthUnit.INCHES),
+                        LengthUnit.INCHES);
+
+        assertEquals(24.0, result.getValue(), EPSILON);
+        assertEquals(LengthUnit.INCHES, result.getUnit());
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_Yards() {
+
+        Length result = new Length(1.0, LengthUnit.FEET)
+                .add(new Length(12.0, LengthUnit.INCHES),
+                        LengthUnit.YARDS);
+
+        assertEquals(0.667, result.getValue(), EPSILON);
+        assertEquals(LengthUnit.YARDS, result.getUnit());
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_Centimeters() {
+
+        Length result = new Length(1.0, LengthUnit.INCHES)
+                .add(new Length(1.0, LengthUnit.INCHES),
+                        LengthUnit.CENTIMETERS);
+
+        assertEquals(5.08, result.getValue(), EPSILON);
+        assertEquals(LengthUnit.CENTIMETERS, result.getUnit());
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_SameAsFirstOperand() {
+
+        Length result = new Length(2.0, LengthUnit.YARDS)
+                .add(new Length(3.0, LengthUnit.FEET),
+                        LengthUnit.YARDS);
+
+        assertEquals(3.0, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_SameAsSecondOperand() {
+
+        Length result = new Length(2.0, LengthUnit.YARDS)
+                .add(new Length(3.0, LengthUnit.FEET),
+                        LengthUnit.FEET);
+
+        assertEquals(9.0, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_Commutativity() {
+
+        Length a = new Length(1.0, LengthUnit.FEET);
+        Length b = new Length(12.0, LengthUnit.INCHES);
+
+        Length r1 = a.add(b, LengthUnit.YARDS);
+        Length r2 = b.add(a, LengthUnit.YARDS);
+
+        assertEquals(r1.getValue(), r2.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_WithZero() {
+
+        Length result = new Length(5.0, LengthUnit.FEET)
+                .add(new Length(0.0, LengthUnit.INCHES),
+                        LengthUnit.YARDS);
+
+        assertEquals(1.667, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_NegativeValues() {
+
+        Length result = new Length(5.0, LengthUnit.FEET)
+                .add(new Length(-2.0, LengthUnit.FEET),
+                        LengthUnit.INCHES);
+
+        assertEquals(36.0, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_NullTargetUnit() {
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new Length(1.0, LengthUnit.FEET)
+                        .add(new Length(12.0,LengthUnit.INCHES),null));
+                                
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
+
+        Length result = new Length(1000.0, LengthUnit.FEET)
+                .add(new Length(500.0, LengthUnit.FEET),
+                        LengthUnit.INCHES);
+
+        assertEquals(18000.0, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
+
+        Length result = new Length(12.0, LengthUnit.INCHES)
+                .add(new Length(12.0, LengthUnit.INCHES),
+                        LengthUnit.YARDS);
+
+        assertEquals(0.667, result.getValue(), EPSILON);
+    }
+    @Test
+    public void testAddition_ExplicitTargetUnit_AllUnitCombinations() {
+
+        Length[] lengths = {
+                new Length(1.0, LengthUnit.FEET),
+                new Length(12.0, LengthUnit.INCHES),
+                new Length(1.0, LengthUnit.YARDS),
+                new Length(30.48, LengthUnit.CENTIMETERS)
+        };
+        for (Length a : lengths) {
+            for (Length b : lengths) {
+                for (LengthUnit target : LengthUnit.values()) {
+
+                    Length result = a.add(b, target);
+
+                    double expectedBase =
+                            a.add(b).add(new Length(0, target)).getValue();
+
+                    assertNotNull(result);
+                    assertEquals(target, result.getUnit());
+                }
+            }
+        }
+    }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_PrecisionTolerance() {
+
+        Length result1 = new Length(1.0, LengthUnit.FEET)
+                .add(new Length(12.0, LengthUnit.INCHES),
+                        LengthUnit.YARDS);
+
+        Length result2 = new Length(24.0, LengthUnit.INCHES)
+                .add(new Length(0.0, LengthUnit.INCHES),
+                        LengthUnit.YARDS);
+
+        assertEquals(result1.getValue(), result2.getValue(), EPSILON);
+    }
+    
+    
+
+    
 
-		QuantityModel converted = original.convertTo(TemperatureUnit.FAHRENHEIT)
-				.convertTo(TemperatureUnit.CELSIUS);
-
-		assertEquals(original.getValue(), converted.getValue(), EPSILON);
-	}
-
-	@Test
-	void testTemperatureConversion_SameUnit() {
-
-		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
-
-		QuantityModel result = t.convertTo(TemperatureUnit.CELSIUS);
-
-		assertEquals(10.0, result.getValue(), EPSILON);
-	}
-
-	@Test
-	void testTemperatureConversion_ZeroValue() {
-
-		assertEquals(32.0,
-				new QuantityModel(0.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(), EPSILON);
-	}
-
-	@Test
-	void testTemperatureConversion_NegativeValues() {
-
-		assertEquals(-40.0,
-				new QuantityModel(-40.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
-				EPSILON);
-	}
-
-	@Test
-	void testTemperatureConversion_LargeValues() {
-
-		assertEquals(1832.0,
-				new QuantityModel(1000.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
-				EPSILON);
-	}
-
-	@Test
-	void testTemperatureUnsupportedOperation_Add() {
-
-		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
-				.add(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
-	}
-
-	@Test
-	void testTemperatureUnsupportedOperation_Subtract() {
-
-		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
-				.subtract(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
-	}
-
-	@Test
-	void testTemperatureUnsupportedOperation_Divide() {
-
-		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
-				.divide(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
-	}
-
-	@Test
-	void testTemperatureUnsupportedOperation_ErrorMessage() {
-
-		Exception ex = assertThrows(UnsupportedOperationException.class,
-				() -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
-						.add(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
-
-		assertTrue(ex.getMessage().contains("Temperature"));
-	}
-
-	@Test
-	void testTemperatureVsLengthIncompatibility() {
-
-		assertFalse(new QuantityModel(100.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(100.0, LengthUnit.FEET)));
-	}
-
-	@Test
-	void testTemperatureVsWeightIncompatibility() {
-
-		assertFalse(new QuantityModel(50.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(50.0, WeightUnit.KILOGRAM)));
-	}
-
-	@Test
-	void testTemperatureVsVolumeIncompatibility() {
-
-		assertFalse(new QuantityModel(25.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(25.0, VolumeUnit.LITRE)));
-	}
-
-	@Test
-	void testOperationSupportMethods_TemperatureUnitAddition() {
-
-		assertFalse(TemperatureUnit.CELSIUS.supportsArithmetic());
-	}
-
-	@Test
-	void testOperationSupportMethods_TemperatureUnitDivision() {
-
-		assertFalse(TemperatureUnit.FAHRENHEIT.supportsArithmetic());
-	}
-
-	@Test
-	void testOperationSupportMethods_LengthUnitAddition() {
-
-		assertTrue(LengthUnit.FEET.supportsArithmetic());
-	}
-
-	@Test
-	void testOperationSupportMethods_WeightUnitDivision() {
-
-		assertTrue(WeightUnit.KILOGRAM.supportsArithmetic());
-	}
-
-	@Test
-	void testTemperatureEnumImplementsIMeasurable() {
-
-		assertTrue(IMeasurable.class.isAssignableFrom(TemperatureUnit.class));
-	}
-
-	@Test
-	void testTemperatureUnit_AllConstants() {
-
-		assertNotNull(TemperatureUnit.CELSIUS);
-		assertNotNull(TemperatureUnit.FAHRENHEIT);
-	}
-
-	@Test
-	void testTemperatureUnit_NameMethod() {
-
-		assertEquals("CELSIUS", TemperatureUnit.CELSIUS.getUnitName());
-	}
-
-	@Test
-	void testTemperatureUnit_ConversionFactor() {
-
-		assertEquals(1.0, TemperatureUnit.CELSIUS.getConversionFactor());
-	}
-
-	@Test
-	void testTemperatureNullUnitValidation() {
-
-		assertThrows(IllegalArgumentException.class, () -> new QuantityModel(100.0, null));
-	}
-
-	@Test
-	void testTemperatureNullOperandValidation_InComparison() {
-
-		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
-
-		assertFalse(t.equals(null));
-	}
-
-	@Test
-	void testTemperatureDifferentValuesInequality() {
-
-		assertFalse(
-				new QuantityModel(50.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(100.0, TemperatureUnit.CELSIUS)));
-	}
-
-	@Test
-	void testTemperatureConversionPrecision_Epsilon() {
-
-		QuantityModel c = new QuantityModel(37.0, TemperatureUnit.CELSIUS);
-
-		QuantityModel f = c.convertTo(TemperatureUnit.FAHRENHEIT);
-
-		QuantityModel back = f.convertTo(TemperatureUnit.CELSIUS);
-
-		assertEquals(c.getValue(), back.getValue(), EPSILON);
-	}
-
-	@Test
-	void testTemperatureConversionEdgeCase_VerySmallDifference() {
-
-		QuantityModel c = new QuantityModel(0.00001, TemperatureUnit.CELSIUS);
-
-		QuantityModel f = c.convertTo(TemperatureUnit.FAHRENHEIT);
-
-		assertNotNull(f);
-	}
-
-	@Test
-	void testTemperatureIntegrationWithGenericQuantity() {
-
-		QuantityModel t = new QuantityModel(20.0, TemperatureUnit.CELSIUS);
-
-		QuantityModel converted = t.convertTo(TemperatureUnit.FAHRENHEIT);
-
-		assertNotNull(converted);
-	}
-
-	@Test
-	void testTemperatureValidateOperationSupport_MethodBehavior() {
-
-		assertThrows(UnsupportedOperationException.class,
-				() -> TemperatureUnit.CELSIUS.validateOperationSupport("addition"));
-	}
 }

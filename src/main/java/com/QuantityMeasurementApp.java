@@ -113,7 +113,7 @@ public class QuantityMeasurementApp {
 		System.out.println("Volume Conversion: " + demonstrateConversion(volume3, VolumeUnit.LITRE));
 
 		System.out.println("Volume Addition: " + demonstrateAddition(volume1, volume2, VolumeUnit.LITRE));
-		
+
 		Quantity<LengthUnit> subtractionResult = demonstrateSubtraction(length1, length2);
 
 		System.out.println("Subtraction Result: " + subtractionResult);
@@ -128,5 +128,21 @@ public class QuantityMeasurementApp {
 
 		System.out.println("Division Result: " + divisionResult);
 		// 5.0
+
+		Quantity<TemperatureUnit> t1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+
+		Quantity<TemperatureUnit> t2 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+		System.out.println("Temperature equality: " + t1.equals(t2));
+
+		System.out.println("Convert 100C to F: "
+				+ new Quantity<>(100.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT));
+
+		try {
+			t1.add(t2);
+		} catch (UnsupportedOperationException e) {
+			System.out.println(e.getMessage());
+		}
+
 	}
 }

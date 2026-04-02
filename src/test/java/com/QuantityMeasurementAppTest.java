@@ -10,6 +10,7 @@ import com.app.quantitymeasurement.unit.LengthUnit;
 import com.app.quantitymeasurement.unit.TemperatureUnit;
 import com.app.quantitymeasurement.unit.VolumeUnit;
 import com.app.quantitymeasurement.unit.WeightUnit;
+import com.app.quantitymeasurement.user.UserRepository;
 
 import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.entity.QuantityDTO;
@@ -26,6 +27,8 @@ public class QuantityMeasurementAppTest {
 	@Autowired
 	private IQuantityMeasurementRepository repository;
 
+	@Autowired
+	private UserRepository userRepository;
 	// LENGTH EQUALITY TESTS
 
 	@Test
@@ -824,8 +827,9 @@ public class QuantityMeasurementAppTest {
 
 		repository.deleteAll();
 
-		QuantityMeasurementServiceImpl service = new QuantityMeasurementServiceImpl(repository);
-
+		QuantityMeasurementServiceImpl service =
+		        new QuantityMeasurementServiceImpl(repository, userRepository);
+		
 		service.add(new QuantityDTO(1.0, "FEET"), new QuantityDTO(12.0, "INCHES"));
 
 		assertEquals(1, repository.findAll().size());

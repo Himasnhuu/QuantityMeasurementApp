@@ -1,5 +1,7 @@
 package com.app.quantitymeasurement.entity;
 
+import com.app.quantitymeasurement.user.User;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,13 +18,48 @@ public class QuantityMeasurementEntity {
     private String result;
     private String error;
 
-    public QuantityMeasurementEntity() {
+    // UC-18 User mapping
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // Default constructor
+    public QuantityMeasurementEntity() {}
+
+    //UC-18
+    public QuantityMeasurementEntity(String operation,
+                                     String operand1,
+                                     String operand2,
+                                     String result,
+                                     User user) {
+        this.operation = operation;
+        this.operand1 = operand1;
+        this.operand2 = operand2;
+        this.result = result;
+        this.user = user;
     }
 
-    public QuantityMeasurementEntity(String operation, String op1, String op2, String result) {
+    public QuantityMeasurementEntity(String operation,
+                                     String operand1,
+                                     String operand2,
+                                     String result,
+                                     String error,
+                                     User user) {
         this.operation = operation;
-        this.operand1 = op1;
-        this.operand2 = op2;
+        this.operand1 = operand1;
+        this.operand2 = operand2;
+        this.result = result;
+        this.error = error;
+        this.user = user;
+    }
+
+    public QuantityMeasurementEntity(String operation,
+                                     String operand1,
+                                     String operand2,
+                                     String result) {
+        this.operation = operation;
+        this.operand1 = operand1;
+        this.operand2 = operand2;
         this.result = result;
     }
 
@@ -30,9 +67,6 @@ public class QuantityMeasurementEntity {
         this.error = error;
     }
 
-    public boolean hasError() {
-        return error != null;
-    }
 
     public Long getId() {
         return id;
@@ -42,43 +76,47 @@ public class QuantityMeasurementEntity {
         return operation;
     }
 
-    public String getOperand1() {
-        return operand1;
-    }
-
-    public String getOperand2() {
-        return operand2;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    public String getOperand1() {
+        return operand1;
     }
 
     public void setOperand1(String operand1) {
         this.operand1 = operand1;
     }
 
+    public String getOperand2() {
+        return operand2;
+    }
+
     public void setOperand2(String operand2) {
         this.operand2 = operand2;
+    }
+
+    public String getResult() {
+        return result;
     }
 
     public void setResult(String result) {
         this.result = result;
     }
 
+    public String getError() {
+        return error;
+    }
+
     public void setError(String error) {
         this.error = error;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

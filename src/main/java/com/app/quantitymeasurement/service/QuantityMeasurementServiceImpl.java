@@ -1,5 +1,6 @@
 package com.app.quantitymeasurement.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.app.quantitymeasurement.Quantity;
@@ -7,22 +8,43 @@ import com.app.quantitymeasurement.entity.QuantityDTO;
 import com.app.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.app.quantitymeasurement.repository.IQuantityMeasurementRepository;
 import com.app.quantitymeasurement.unit.LengthUnit;
+import com.app.quantitymeasurement.user.User;
+import com.app.quantitymeasurement.user.UserRepository;
 
 @Service
 public class QuantityMeasurementServiceImpl
         implements IQuantityMeasurementService {
 
     private final IQuantityMeasurementRepository repository;
+    private final UserRepository userRepository;
 
-    public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repo) {
+    public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repo,
+                                          UserRepository userRepository) {
         this.repository = repo;
+        this.userRepository = userRepository;
     }
 
+    // Convert DTO → Quantity
     private Quantity<LengthUnit> toQuantity(QuantityDTO dto) {
         return new Quantity<>(
                 dto.getValue(),
                 LengthUnit.valueOf(dto.getUnit())
         );
+    }
+
+    // Get Logged-in User from JWT
+    private User getCurrentUser() {
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
+        }
+
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElse(null);
     }
 
     @Override
@@ -33,11 +55,14 @@ public class QuantityMeasurementServiceImpl
 
         boolean result = quantity1.equals(quantity2);
 
+        User user = getCurrentUser();
+
         repository.save(new QuantityMeasurementEntity(
                 "COMPARE",
                 q1.toString(),
                 q2.toString(),
-                String.valueOf(result)
+                String.valueOf(result),
+                user
         ));
 
         return result;
@@ -51,11 +76,14 @@ public class QuantityMeasurementServiceImpl
         Quantity<LengthUnit> result =
                 quantity.convertTo(LengthUnit.valueOf(targetUnit));
 
+        User user = getCurrentUser();
+
         repository.save(new QuantityMeasurementEntity(
                 "CONVERT",
                 q.toString(),
                 targetUnit,
-                result.toString()
+                result.toString(),
+                user
         ));
 
         return new QuantityDTO(
@@ -72,11 +100,14 @@ public class QuantityMeasurementServiceImpl
 
         Quantity<LengthUnit> result = quantity1.add(quantity2);
 
+        User user = getCurrentUser();
+
         repository.save(new QuantityMeasurementEntity(
                 "ADD",
                 q1.toString(),
                 q2.toString(),
-                result.toString()
+                result.toString(),
+                user
         ));
 
         return new QuantityDTO(
@@ -93,11 +124,14 @@ public class QuantityMeasurementServiceImpl
 
         Quantity<LengthUnit> result = quantity1.subtract(quantity2);
 
+        User user = getCurrentUser();
+
         repository.save(new QuantityMeasurementEntity(
                 "SUBTRACT",
                 q1.toString(),
                 q2.toString(),
-                result.toString()
+                result.toString(),
+                user
         ));
 
         return new QuantityDTO(
@@ -114,11 +148,14 @@ public class QuantityMeasurementServiceImpl
 
         double result = quantity1.divide(quantity2);
 
+        User user = getCurrentUser();
+
         repository.save(new QuantityMeasurementEntity(
                 "DIVIDE",
                 q1.toString(),
                 q2.toString(),
-                String.valueOf(result)
+                String.valueOf(result),
+                user
         ));
 
         return result;

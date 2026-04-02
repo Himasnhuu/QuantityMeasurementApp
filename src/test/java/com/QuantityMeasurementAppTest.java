@@ -4,45 +4,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import com.app.quantitymeasurement.model.QuantityModel;
+import com.app.quantitymeasurement.units.*;
+
 public class QuantityMeasurementAppTest {
 
 	private static final double EPSILON = 0.0001;
 
 	@Test
 	void testTemperatureEquality_CelsiusToCelsius_SameValue() {
-		assertTrue(new Quantity<>(0.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(0.0, TemperatureUnit.CELSIUS)));
+		assertTrue(new QuantityModel(0.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(0.0, TemperatureUnit.CELSIUS)));
 	}
 
 	@Test
 	void testTemperatureEquality_FahrenheitToFahrenheit_SameValue() {
-		assertTrue(new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT)
-				.equals(new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT)));
+		assertTrue(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)
+				.equals(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)));
 	}
 
 	@Test
 	void testTemperatureEquality_CelsiusToFahrenheit_0Celsius32Fahrenheit() {
 		assertTrue(
-				new Quantity<>(0.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT)));
+				new QuantityModel(0.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT)));
 	}
 
 	@Test
 	void testTemperatureEquality_CelsiusToFahrenheit_100Celsius212Fahrenheit() {
-		assertTrue(new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-				.equals(new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT)));
+		assertTrue(new QuantityModel(100.0, TemperatureUnit.CELSIUS)
+				.equals(new QuantityModel(212.0, TemperatureUnit.FAHRENHEIT)));
 	}
 
 	@Test
 	void testTemperatureEquality_CelsiusToFahrenheit_Negative40Equal() {
-		assertTrue(new Quantity<>(-40.0, TemperatureUnit.CELSIUS)
-				.equals(new Quantity<>(-40.0, TemperatureUnit.FAHRENHEIT)));
+		assertTrue(new QuantityModel(-40.0, TemperatureUnit.CELSIUS)
+				.equals(new QuantityModel(-40.0, TemperatureUnit.FAHRENHEIT)));
 	}
 
 	@Test
 	void testTemperatureEquality_SymmetricProperty() {
 
-		Quantity<TemperatureUnit> a = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+		QuantityModel a = new QuantityModel(0.0, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> b = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+		QuantityModel b = new QuantityModel(32.0, TemperatureUnit.FAHRENHEIT);
 
 		assertTrue(a.equals(b));
 		assertTrue(b.equals(a));
@@ -51,7 +54,7 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureEquality_ReflexiveProperty() {
 
-		Quantity<TemperatureUnit> t = new Quantity<>(10.0, TemperatureUnit.CELSIUS);
+		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
 
 		assertTrue(t.equals(t));
 	}
@@ -60,11 +63,11 @@ public class QuantityMeasurementAppTest {
 	void testTemperatureConversion_CelsiusToFahrenheit_VariousValues() {
 
 		assertEquals(122.0,
-				new Quantity<>(50.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
+				new QuantityModel(50.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
 				EPSILON);
 
 		assertEquals(-4.0,
-				new Quantity<>(-20.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
+				new QuantityModel(-20.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
 				EPSILON);
 	}
 
@@ -72,16 +75,16 @@ public class QuantityMeasurementAppTest {
 	void testTemperatureConversion_FahrenheitToCelsius_VariousValues() {
 
 		assertEquals(50.0,
-				new Quantity<>(122.0, TemperatureUnit.FAHRENHEIT).convertTo(TemperatureUnit.CELSIUS).getValue(),
+				new QuantityModel(122.0, TemperatureUnit.FAHRENHEIT).convertTo(TemperatureUnit.CELSIUS).getValue(),
 				EPSILON);
 	}
 
 	@Test
 	void testTemperatureConversion_RoundTrip_PreservesValue() {
 
-		Quantity<TemperatureUnit> original = new Quantity<>(25.0, TemperatureUnit.CELSIUS);
+		QuantityModel original = new QuantityModel(25.0, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> converted = original.convertTo(TemperatureUnit.FAHRENHEIT)
+		QuantityModel converted = original.convertTo(TemperatureUnit.FAHRENHEIT)
 				.convertTo(TemperatureUnit.CELSIUS);
 
 		assertEquals(original.getValue(), converted.getValue(), EPSILON);
@@ -90,9 +93,9 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureConversion_SameUnit() {
 
-		Quantity<TemperatureUnit> t = new Quantity<>(10.0, TemperatureUnit.CELSIUS);
+		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> result = t.convertTo(TemperatureUnit.CELSIUS);
+		QuantityModel result = t.convertTo(TemperatureUnit.CELSIUS);
 
 		assertEquals(10.0, result.getValue(), EPSILON);
 	}
@@ -101,14 +104,14 @@ public class QuantityMeasurementAppTest {
 	void testTemperatureConversion_ZeroValue() {
 
 		assertEquals(32.0,
-				new Quantity<>(0.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(), EPSILON);
+				new QuantityModel(0.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(), EPSILON);
 	}
 
 	@Test
 	void testTemperatureConversion_NegativeValues() {
 
 		assertEquals(-40.0,
-				new Quantity<>(-40.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
+				new QuantityModel(-40.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
 				EPSILON);
 	}
 
@@ -116,37 +119,37 @@ public class QuantityMeasurementAppTest {
 	void testTemperatureConversion_LargeValues() {
 
 		assertEquals(1832.0,
-				new Quantity<>(1000.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
+				new QuantityModel(1000.0, TemperatureUnit.CELSIUS).convertTo(TemperatureUnit.FAHRENHEIT).getValue(),
 				EPSILON);
 	}
 
 	@Test
 	void testTemperatureUnsupportedOperation_Add() {
 
-		assertThrows(UnsupportedOperationException.class, () -> new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-				.add(new Quantity<>(50.0, TemperatureUnit.CELSIUS)));
+		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
+				.add(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
 	}
 
 	@Test
 	void testTemperatureUnsupportedOperation_Subtract() {
 
-		assertThrows(UnsupportedOperationException.class, () -> new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-				.subtract(new Quantity<>(50.0, TemperatureUnit.CELSIUS)));
+		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
+				.subtract(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
 	}
 
 	@Test
 	void testTemperatureUnsupportedOperation_Divide() {
 
-		assertThrows(UnsupportedOperationException.class, () -> new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-				.divide(new Quantity<>(50.0, TemperatureUnit.CELSIUS)));
+		assertThrows(UnsupportedOperationException.class, () -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
+				.divide(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
 	}
 
 	@Test
 	void testTemperatureUnsupportedOperation_ErrorMessage() {
 
 		Exception ex = assertThrows(UnsupportedOperationException.class,
-				() -> new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-						.add(new Quantity<>(50.0, TemperatureUnit.CELSIUS)));
+				() -> new QuantityModel(100.0, TemperatureUnit.CELSIUS)
+						.add(new QuantityModel(50.0, TemperatureUnit.CELSIUS)));
 
 		assertTrue(ex.getMessage().contains("Temperature"));
 	}
@@ -154,19 +157,19 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureVsLengthIncompatibility() {
 
-		assertFalse(new Quantity<>(100.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(100.0, LengthUnit.FEET)));
+		assertFalse(new QuantityModel(100.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(100.0, LengthUnit.FEET)));
 	}
 
 	@Test
 	void testTemperatureVsWeightIncompatibility() {
 
-		assertFalse(new Quantity<>(50.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(50.0, WeightUnit.KILOGRAM)));
+		assertFalse(new QuantityModel(50.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(50.0, WeightUnit.KILOGRAM)));
 	}
 
 	@Test
 	void testTemperatureVsVolumeIncompatibility() {
 
-		assertFalse(new Quantity<>(25.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(25.0, VolumeUnit.LITRE)));
+		assertFalse(new QuantityModel(25.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(25.0, VolumeUnit.LITRE)));
 	}
 
 	@Test
@@ -221,13 +224,13 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureNullUnitValidation() {
 
-		assertThrows(IllegalArgumentException.class, () -> new Quantity<>(100.0, null));
+		assertThrows(IllegalArgumentException.class, () -> new QuantityModel(100.0, null));
 	}
 
 	@Test
 	void testTemperatureNullOperandValidation_InComparison() {
 
-		Quantity<TemperatureUnit> t = new Quantity<>(10.0, TemperatureUnit.CELSIUS);
+		QuantityModel t = new QuantityModel(10.0, TemperatureUnit.CELSIUS);
 
 		assertFalse(t.equals(null));
 	}
@@ -236,17 +239,17 @@ public class QuantityMeasurementAppTest {
 	void testTemperatureDifferentValuesInequality() {
 
 		assertFalse(
-				new Quantity<>(50.0, TemperatureUnit.CELSIUS).equals(new Quantity<>(100.0, TemperatureUnit.CELSIUS)));
+				new QuantityModel(50.0, TemperatureUnit.CELSIUS).equals(new QuantityModel(100.0, TemperatureUnit.CELSIUS)));
 	}
 
 	@Test
 	void testTemperatureConversionPrecision_Epsilon() {
 
-		Quantity<TemperatureUnit> c = new Quantity<>(37.0, TemperatureUnit.CELSIUS);
+		QuantityModel c = new QuantityModel(37.0, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> f = c.convertTo(TemperatureUnit.FAHRENHEIT);
+		QuantityModel f = c.convertTo(TemperatureUnit.FAHRENHEIT);
 
-		Quantity<TemperatureUnit> back = f.convertTo(TemperatureUnit.CELSIUS);
+		QuantityModel back = f.convertTo(TemperatureUnit.CELSIUS);
 
 		assertEquals(c.getValue(), back.getValue(), EPSILON);
 	}
@@ -254,9 +257,9 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureConversionEdgeCase_VerySmallDifference() {
 
-		Quantity<TemperatureUnit> c = new Quantity<>(0.00001, TemperatureUnit.CELSIUS);
+		QuantityModel c = new QuantityModel(0.00001, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> f = c.convertTo(TemperatureUnit.FAHRENHEIT);
+		QuantityModel f = c.convertTo(TemperatureUnit.FAHRENHEIT);
 
 		assertNotNull(f);
 	}
@@ -264,9 +267,9 @@ public class QuantityMeasurementAppTest {
 	@Test
 	void testTemperatureIntegrationWithGenericQuantity() {
 
-		Quantity<TemperatureUnit> t = new Quantity<>(20.0, TemperatureUnit.CELSIUS);
+		QuantityModel t = new QuantityModel(20.0, TemperatureUnit.CELSIUS);
 
-		Quantity<TemperatureUnit> converted = t.convertTo(TemperatureUnit.FAHRENHEIT);
+		QuantityModel converted = t.convertTo(TemperatureUnit.FAHRENHEIT);
 
 		assertNotNull(converted);
 	}

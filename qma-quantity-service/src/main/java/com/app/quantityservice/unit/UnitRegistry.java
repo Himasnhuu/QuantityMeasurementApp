@@ -17,11 +17,9 @@ public class UnitRegistry {
 
     /**
      * Finds the correct unit constant across all measurement categories.
-     * @param unitName The string name of the unit (e.g., "LITRE", "INCHES")
-     * @return The IMeasurable unit instance
-     * @throws IllegalArgumentException if the unit is not found in any category
      */
     public IMeasurable getUnit(String unitName) {
+
         if (unitName == null || unitName.isBlank()) {
             throw new IllegalArgumentException("Unit name cannot be empty");
         }
@@ -30,14 +28,18 @@ public class UnitRegistry {
 
         for (Class<? extends Enum<?>> category : unitCategories) {
             try {
-                // Java Enums have a built-in valueOf method
-                return (IMeasurable) Enum.valueOf((Class<Enum>) category, searchName);
+                // ✅ FIX: use Enum.valueOf with proper generics
+                Enum<?> enumConstant = Enum.valueOf((Class) category, searchName);
+                return (IMeasurable) enumConstant;
+
             } catch (IllegalArgumentException ignored) {
-                // Move to the next category if not found in this one
+                // try next category
             }
         }
 
-        throw new IllegalArgumentException("Invalid unit: '" + unitName + 
-                "'. Ensure the unit exists in Length, Volume, Weight, or Temperature categories.");
+        throw new IllegalArgumentException(
+                "Invalid unit: '" + unitName +
+                "'. Ensure the unit exists in Length, Volume, Weight, or Temperature categories."
+        );
     }
 }

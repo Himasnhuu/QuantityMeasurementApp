@@ -1,14 +1,16 @@
-# Use Java 17 image
-FROM eclipse-temurin:17-jdk ✅
+# Stage 1: Build JAR
+FROM maven:3.9.9-eclipse-temurin-17 AS builder
 
-# Set working directory
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy jar file
-COPY target/*.jar app.jar
+# Stage 2: Run app
+FROM eclipse-temurin:17-jdk
 
-# Expose port (Spring Boot default)
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8081
 
-# Run application
 ENTRYPOINT ["java","-jar","app.jar"]
